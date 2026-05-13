@@ -43,7 +43,7 @@ export function ConfirmModal({
             exit={{ scale: 0.95, opacity: 0, y: 8 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
           >
-            <h3 className="text-base font-semibold text-white mb-2">{title}</h3>
+            <h3 className="text-base font-semibold text-ink mb-2">{title}</h3>
             <p className="text-sm text-slate-400 mb-6 leading-relaxed">{message}</p>
 
             <div className="flex gap-3 justify-end">
@@ -59,7 +59,7 @@ export function ConfirmModal({
                 type="button"
                 onClick={onConfirm}
                 disabled={loading}
-                className={`px-4 py-2 rounded-lg text-sm font-medium text-white transition disabled:opacity-50 flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium text-ink transition disabled:opacity-50 flex items-center gap-2 ${
                   variant === "danger"
                     ? "bg-red-600 hover:bg-red-500"
                     : "bg-brand-600 hover:bg-brand-500"

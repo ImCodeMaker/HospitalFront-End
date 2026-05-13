@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import type { LabOrderStatus, LabPriority, AddLabResultRequest, LabResultFlag } from "@/types/lab";
 
-const INPUT = "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
+const INPUT = "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
 const LABEL = "block text-xs font-medium text-slate-400 mb-1";
 
 const PRIORITY_COLORS: Record<LabPriority, string> = {
@@ -101,22 +101,22 @@ export default function LabPage() {
     <div className="flex flex-col gap-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Laboratorio</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{labOrders.length > 0 ? `${labOrders.length} órdenes` : "Gestión de exámenes"}</p>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Laboratorio</h1>
+          <p className="text-sm text-ink/60 mt-1">{labOrders.length > 0 ? `${labOrders.length} órdenes` : "Gestión de exámenes"}</p>
         </div>
       </motion.div>
 
       {/* Filters */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }} className="flex gap-3 flex-wrap">
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as LabOrderStatus | "")}
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer">
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer">
           <option value="">Todos los estados</option>
           <option value="Pending">Pendiente</option>
           <option value="InProgress">En Proceso</option>
           <option value="Completed">Completado</option>
         </select>
         <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value as LabPriority | "")}
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer">
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer">
           <option value="">Todas las prioridades</option>
           <option value="Routine">Rutina</option>
           <option value="Urgent">Urgente</option>
@@ -127,7 +127,7 @@ export default function LabPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Orders list */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}
-          className="lg:col-span-3 bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
+          className="lg:col-span-3 bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden">
           {isError ? (
             <div className="flex items-center justify-center py-16"><p className="text-slate-400">Error al cargar.</p></div>
           ) : (
@@ -135,7 +135,7 @@ export default function LabPage() {
               <thead>
                 <tr className="border-b border-surface-800">
                   {["Examen", "Categoría", "Prioridad", "Estado", ""].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -147,7 +147,7 @@ export default function LabPage() {
                     <tr key={o.id} onClick={() => setSelectedOrder(o.id)}
                       className={`border-b border-surface-800 last:border-0 transition-colors cursor-pointer ${selectedOrder === o.id ? "bg-brand-600/10" : "hover:bg-surface-800/50"}`}>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-white">{o.testName}</p>
+                        <p className="font-medium text-ink">{o.testName}</p>
                         <p className="text-xs text-slate-500">{formatDateTime(o.createdAt)}</p>
                       </td>
                       <td className="px-4 py-3 text-slate-400">{o.testCategory ?? "—"}</td>
@@ -178,7 +178,7 @@ export default function LabPage() {
 
         {/* Results panel */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}
-          className="lg:col-span-2 bg-surface-900 border border-surface-800 rounded-2xl p-5">
+          className="lg:col-span-2 bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-5">
           <h2 className="text-sm font-semibold text-slate-300 mb-3">Resultados</h2>
           {!selectedOrder ? (
             <p className="text-slate-500 text-sm">Selecciona una orden</p>
@@ -193,7 +193,7 @@ export default function LabPage() {
                   {r.flag === "Critical" && <p className="text-xs font-semibold text-red-400 mb-1">⚠ CRÍTICO</p>}
                   <p className="text-xs text-slate-500 mb-1">{r.testName}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-xl font-bold text-white">{r.value ?? "—"}</span>
+                    <span className="text-xl font-bold text-ink">{r.value ?? "—"}</span>
                     {r.unit && <span className="text-sm text-slate-500">{r.unit}</span>}
                   </div>
                   {r.referenceRange && <p className="text-xs text-slate-500 mt-0.5">Ref: {r.referenceRange}</p>}

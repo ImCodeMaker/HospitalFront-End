@@ -84,7 +84,7 @@ export function SplashScreen({ onComplete }: Props) {
       </svg>
 
       <div ref={textRef} className="flex flex-col items-center gap-1">
-        <h1 className="text-3xl font-bold tracking-tight text-white">
+        <h1 className="text-3xl font-bold tracking-tight text-ink">
           Lova Salud
         </h1>
         <p ref={taglineRef} className="text-sm text-slate-400">

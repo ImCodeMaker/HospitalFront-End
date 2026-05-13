@@ -1,5 +1,16 @@
 export type DocumentType = "Cedula" | "Passport" | "Other";
 export type Gender = "Male" | "Female" | "Other";
+export type GuardianRelationship = "Mother" | "Father" | "Sibling" | "Spouse" | "Grandparent" | "LegalGuardian" | "Other";
+
+export const GUARDIAN_RELATIONSHIP_LABEL: Record<GuardianRelationship, string> = {
+  Mother: "Madre",
+  Father: "Padre",
+  Sibling: "Hermano(a)",
+  Spouse: "Cónyuge",
+  Grandparent: "Abuelo(a)",
+  LegalGuardian: "Tutor legal",
+  Other: "Otro",
+};
 export type BloodType = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 export type PatientStatus =
   | "Active"
@@ -32,6 +43,13 @@ export interface PatientDto {
   insuranceCompanyName: string | null;
   insurancePolicyNumber: string | null;
   insuranceCoveragePercentage: number | null;
+  guardianFirstName: string | null;
+  guardianLastName: string | null;
+  guardianDocumentType: DocumentType | null;
+  guardianDocumentNumber: string | null;
+  guardianRelationship: GuardianRelationship | null;
+  guardianPhone: string | null;
+  guardianEmail: string | null;
   createdAt: string;
 }
 
@@ -70,6 +88,13 @@ export interface CreatePatientRequest {
   insurancePolicyNumber?: string;
   insurancePolicyHolderName?: string;
   insuranceCoveragePercentage?: number;
+  guardianFirstName?: string;
+  guardianLastName?: string;
+  guardianDocumentType?: DocumentType;
+  guardianDocumentNumber?: string;
+  guardianRelationship?: GuardianRelationship;
+  guardianPhone?: string;
+  guardianEmail?: string;
 }
 
 export interface UpdatePatientRequest extends CreatePatientRequest {

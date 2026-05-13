@@ -27,14 +27,14 @@ export default function PrescriptionsPage() {
     <div className="flex flex-col gap-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Prescripciones</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Búsqueda y gestión de recetas médicas</p>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Prescripciones</h1>
+          <p className="text-sm text-ink/60 mt-1">Búsqueda y gestión de recetas médicas</p>
         </div>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface-900 border border-surface-800 rounded-2xl p-4">
+        <div className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-4">
           <h2 className="text-sm font-semibold text-slate-300 mb-3">Consultas recientes</h2>
           <div className="flex flex-col gap-1">
             {recentConsults.map((c) => (
@@ -48,7 +48,7 @@ export default function PrescriptionsPage() {
           </div>
         </div>
 
-        <div className="md:col-span-2 bg-surface-900 border border-surface-800 rounded-2xl p-4">
+        <div className="md:col-span-2 bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-4">
           {!selectedConsultId ? (
             <div className="flex flex-col items-center justify-center h-48 gap-2">
               <svg className="w-10 h-10 text-surface-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,10 +74,10 @@ export default function PrescriptionsPage() {
                 </button>
               </div>
               {prescriptions.map((rx) => (
-                <div key={rx.id} className="bg-surface-800 border border-surface-700 rounded-xl p-4">
+                <div key={rx.id} className="bg-surface-100 border border-surface-700/60 rounded-xl p-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-white font-medium">{rx.drugName}
+                      <p className="text-ink font-medium">{rx.drugName}
                         {rx.presentation && <span className="text-slate-500 text-xs ml-2">{rx.presentation}</span>}
                       </p>
                       <p className="text-sm text-slate-400 mt-0.5">{rx.dosage} · {rx.frequency}{rx.durationDays && ` · ${rx.durationDays} días`}</p>

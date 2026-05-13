@@ -1,13 +1,25 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sidebar } from "./Sidebar";
+import { TopNav } from "./TopNav";
 import { useAuthStore } from "@/store/authStore";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { settingsApi } from "@/api/settings";
 import { startOnboardingTour } from "@/lib/tour";
 
 export function AppShell() {
   const { isAuthenticated, user, isFirstLogin, setFirstLogin } = useAuthStore();
   const navigate = useNavigate();
+
+  const { data: clinic } = useQuery({
+    queryKey: ["clinic-settings"],
+    queryFn: settingsApi.getClinicSettings,
+    enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  useInactivityLogout(clinic?.sessionTimeoutMinutes ?? 15);
 
   useEffect(() => {
     if (!isAuthenticated) navigate("/login", { replace: true });
@@ -24,26 +36,20 @@ export function AppShell() {
   }, [isFirstLogin, user, setFirstLogin]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface-950">
-      <Sidebar />
-
-      {/* Title bar spacer for macOS traffic lights */}
-      <div className="flex flex-col flex-1 min-w-0">
-        <div className="h-8 drag-region bg-surface-950 shrink-0" />
-
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={location.pathname}
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -12 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="flex-1 overflow-auto p-6"
-          >
-            <Outlet />
-          </motion.main>
-        </AnimatePresence>
-      </div>
+    <div className="flex flex-col h-screen overflow-hidden">
+      <TopNav />
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={location.pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="flex-1 overflow-auto px-6 pb-6 pt-2"
+        >
+          <Outlet />
+        </motion.main>
+      </AnimatePresence>
     </div>
   );
 }

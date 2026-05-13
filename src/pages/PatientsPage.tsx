@@ -14,6 +14,7 @@ import type {
   BloodType,
   CreatePatientRequest,
 } from "@/types/patients";
+import { validateDocument as runDocValidator, nationalityToCountryCode, COUNTRIES, formatDocumentInput, exampleFor, nationalIdLabel } from "@/lib/documentValidation";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,30 +30,15 @@ function genderLabel(g: Gender) {
   return g === "Male" ? "Masculino" : g === "Female" ? "Femenino" : "Otro";
 }
 
-function validateCedula(raw: string): string | null {
-  const digits = raw.replace(/\D/g, "");
-  if (digits.length !== 11) return "La cédula debe tener 11 dígitos (XXX-XXXXXXX-X)";
-  let sum = 0;
-  for (let i = 0; i < 10; i++) {
-    let n = parseInt(digits[i]) * (i % 2 === 0 ? 1 : 2);
-    if (n >= 10) n = Math.floor(n / 10) + (n % 10);
-    sum += n;
-  }
-  const check = (10 - (sum % 10)) % 10;
-  if (check !== parseInt(digits[10])) return "Número de cédula dominicana inválido";
-  return null;
-}
-
-function validatePassport(raw: string): string | null {
-  if (!/^[A-Z]{2}\d{7}$/i.test(raw.trim())) return "Formato de pasaporte inválido (ej: AB1234567)";
-  return null;
-}
-
-function validateDocument(type: DocumentType, number: string): string | null {
+function validateDocument(type: DocumentType, number: string, nationality?: string): string | null {
   if (!number) return null;
-  if (type === "Cedula") return validateCedula(number);
-  if (type === "Passport") return validatePassport(number);
-  return null;
+  const cc = nationalityToCountryCode(nationality);
+  const res = runDocValidator(type, number, cc);
+  return res.ok ? null : (res.error ?? null);
+}
+
+function formatFor(type: DocumentType, value: string, nationality?: string): string {
+  return formatDocumentInput(type, value, nationalityToCountryCode(nationality));
 }
 
 const STATUS_OPTIONS: { value: PatientStatus | ""; label: string }[] = [
@@ -68,7 +54,7 @@ const STATUS_OPTIONS: { value: PatientStatus | ""; label: string }[] = [
 // ── Input style ──────────────────────────────────────────────────────────────
 
 const INPUT =
-  "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
+  "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
 const SELECT = INPUT + " appearance-none cursor-pointer";
 const LABEL = "block text-xs font-medium text-slate-400 mb-1";
 
@@ -240,12 +226,14 @@ function CreatePatientForm({ onSuccess, onCancel }: CreatePatientFormProps) {
             value={form.documentType}
             onChange={(e) => {
               const t = e.target.value as DocumentType;
+              const reformatted = formatFor(t, form.documentNumber, form.nationality);
               set("documentType", t);
-              setDocError(validateDocument(t, form.documentNumber));
+              if (reformatted !== form.documentNumber) set("documentNumber", reformatted);
+              setDocError(validateDocument(t, reformatted, form.nationality));
             }}
             required
           >
-            <option value="Cedula">Cédula</option>
+            <option value="Cedula">{nationalIdLabel(nationalityToCountryCode(form.nationality))}</option>
             <option value="Passport">Pasaporte</option>
             <option value="Other">Otro</option>
           </select>
@@ -256,15 +244,18 @@ function CreatePatientForm({ onSuccess, onCancel }: CreatePatientFormProps) {
             className={`${INPUT} ${docError ? "border-red-500 focus:ring-red-500" : ""}`}
             value={form.documentNumber}
             onChange={(e) => {
-              set("documentNumber", e.target.value);
-              if (docError) setDocError(validateDocument(form.documentType, e.target.value));
+              const formatted = formatFor(form.documentType, e.target.value, form.nationality);
+              set("documentNumber", formatted);
+              if (docError) setDocError(validateDocument(form.documentType, formatted, form.nationality));
             }}
             onBlur={(e) => {
+              const formatted = formatFor(form.documentType, e.target.value, form.nationality);
+              if (formatted !== form.documentNumber) set("documentNumber", formatted);
               handleDuplicateCheck();
-              setDocError(validateDocument(form.documentType, e.target.value));
+              setDocError(validateDocument(form.documentType, formatted, form.nationality));
             }}
             required
-            placeholder={form.documentType === "Cedula" ? "001-0000000-0" : form.documentType === "Passport" ? "AB1234567" : ""}
+            placeholder={exampleFor(form.documentType, nationalityToCountryCode(form.nationality))}
           />
         </div>
       </div>
@@ -308,14 +299,25 @@ function CreatePatientForm({ onSuccess, onCancel }: CreatePatientFormProps) {
       </div>
 
       <div>
-        <label className={LABEL}>Nacionalidad *</label>
-        <input
-          className={INPUT}
+        <label className={LABEL}>Nacionalidad / País *</label>
+        <select
+          className={SELECT}
           value={form.nationality}
-          onChange={(e) => set("nationality", e.target.value)}
+          onChange={(e) => {
+            const newNat = e.target.value;
+            const reformatted = formatFor(form.documentType, form.documentNumber, newNat);
+            set("nationality", newNat);
+            if (reformatted !== form.documentNumber) set("documentNumber", reformatted);
+            setDocError(validateDocument(form.documentType, reformatted, newNat));
+          }}
           required
-          placeholder="Dominicana"
-        />
+        >
+          {COUNTRIES.map((c) => (
+            <option key={c.code} value={c.nationalityEs}>
+              {c.flag} {c.nameEs} — {c.nationalityEs}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -473,7 +475,7 @@ function CreatePatientForm({ onSuccess, onCancel }: CreatePatientFormProps) {
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-surface-800 transition-colors"
+          className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-ink hover:bg-surface-800 transition-colors"
         >
           Cancelar
         </button>
@@ -538,8 +540,8 @@ export default function PatientsPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-2xl font-bold text-white">Pacientes</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Pacientes</h1>
+          <p className="text-sm text-ink/60 mt-1">
             {totalCount > 0 ? `${totalCount} pacientes registrados` : "Gestión de pacientes"}
           </p>
         </div>
@@ -573,7 +575,7 @@ export default function PatientsPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
           </svg>
           <input
-            className="bg-surface-800 border border-surface-700 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full"
+            className="bg-surface-100 border border-surface-700/60 rounded-lg pl-9 pr-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full"
             placeholder="Buscar por nombre, cédula…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -582,7 +584,7 @@ export default function PatientsPage() {
 
         {/* Status filter */}
         <select
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer min-w-[180px]"
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer min-w-[180px]"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as PatientStatus | "")}
         >
@@ -599,7 +601,7 @@ export default function PatientsPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.25 }}
-        className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden"
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden"
       >
         {isError ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -613,25 +615,25 @@ export default function PatientsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-surface-800">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Paciente
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Documento
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Edad
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Género
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Teléfono
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <th className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
                     Registrado
                   </th>
                   <th className="px-4 py-3" />
@@ -657,7 +659,7 @@ export default function PatientsPage() {
                                 {patient.firstName[0]}{patient.lastName[0]}
                               </span>
                             </div>
-                            <span className="font-medium text-white">
+                            <span className="font-medium text-ink">
                               {patient.fullName}
                             </span>
                           </div>
@@ -700,7 +702,7 @@ export default function PatientsPage() {
                             </button>
                             <button
                               onClick={() => navigate(`/patients/${patient.id}?edit=1`)}
-                              className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-surface-700 hover:text-white transition-colors"
+                              className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-surface-700 hover:text-ink transition-colors"
                             >
                               Editar
                             </button>

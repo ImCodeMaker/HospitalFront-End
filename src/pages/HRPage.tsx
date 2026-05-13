@@ -8,7 +8,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import type { CreateEmployeeRequest, RecruitmentStage } from "@/types/hr";
 import type { UserRole } from "@/store/authStore";
 
-const INPUT = "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
+const INPUT = "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
 const SELECT = INPUT + " appearance-none cursor-pointer";
 const LABEL = "block text-xs font-medium text-slate-400 mb-1";
 
@@ -75,8 +75,8 @@ export default function HRPage() {
     <div className="flex flex-col gap-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Recursos Humanos</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Personal y reclutamiento</p>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Recursos Humanos</h1>
+          <p className="text-sm text-ink/60 mt-1">Personal y reclutamiento</p>
         </div>
         {tab === "employees" && (
           <button onClick={() => setShowEmpModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium transition-colors">
@@ -90,7 +90,7 @@ export default function HRPage() {
       <div className="flex gap-1 border-b border-surface-800">
         {(["employees", "recruitment"] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t ? "border-brand-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"}`}>
+            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t ? "border-brand-500 text-ink" : "border-transparent text-slate-500 hover:text-slate-300"}`}>
             {t === "employees" ? "Empleados" : "Reclutamiento"}
           </button>
         ))}
@@ -98,12 +98,12 @@ export default function HRPage() {
 
       {tab === "employees" && (
         <motion.div key="employees" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-4">
-          <div className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
+          <div className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-surface-800">
                   {["Empleado", "Cargo", "Email", "Teléfono", "Salario", "Desde", "Estado"].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -118,7 +118,7 @@ export default function HRPage() {
                           <div className="w-8 h-8 rounded-full bg-brand-600/20 border border-brand-500/20 flex items-center justify-center shrink-0">
                             <span className="text-xs font-semibold text-brand-400">{e.firstName[0]}{e.lastName[0]}</span>
                           </div>
-                          <span className="font-medium text-white">{e.fullName}</span>
+                          <span className="font-medium text-ink">{e.fullName}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-slate-400">{ROLE_LABELS[e.role] ?? e.role}</td>
@@ -142,12 +142,12 @@ export default function HRPage() {
 
       {tab === "recruitment" && (
         <motion.div key="recruitment" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
+          className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-surface-800">
                 {["Candidato", "Cargo", "Email", "Etapa", "Aplicó", ""].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -157,7 +157,7 @@ export default function HRPage() {
                   <tr><td colSpan={6}><div className="flex items-center justify-center py-12"><p className="text-slate-400">Sin candidatos</p></div></td></tr>
                 ) : recruitment.map((r) => (
                   <tr key={r.id} className="border-b border-surface-800 last:border-0 hover:bg-surface-800/30 transition-colors">
-                    <td className="px-4 py-3 font-medium text-white">{r.applicantName}</td>
+                    <td className="px-4 py-3 font-medium text-ink">{r.applicantName}</td>
                     <td className="px-4 py-3 text-slate-400">{r.appliedRole}</td>
                     <td className="px-4 py-3 text-slate-400">{r.email}</td>
                     <td className="px-4 py-3">
@@ -204,7 +204,7 @@ export default function HRPage() {
           </div>
           {createEmpMutation.isError && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">Error al crear empleado.</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setShowEmpModal(false)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-surface-800">Cancelar</button>
+            <button type="button" onClick={() => setShowEmpModal(false)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-ink hover:bg-surface-800">Cancelar</button>
             <button type="submit" disabled={createEmpMutation.isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white disabled:opacity-50 flex items-center gap-2">
               {createEmpMutation.isPending && <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               Crear

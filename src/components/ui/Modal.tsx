@@ -54,10 +54,10 @@ export function Modal({
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-5 shrink-0">
-              <h2 className="text-lg font-semibold text-white">{title}</h2>
+              <h2 className="text-lg font-semibold text-ink">{title}</h2>
               <button
                 onClick={onClose}
-                className="text-slate-500 hover:text-white transition-colors rounded-lg p-1 hover:bg-surface-800"
+                className="text-slate-500 hover:text-ink transition-colors rounded-lg p-1 hover:bg-surface-800"
                 aria-label="Cerrar"
               >
                 <svg

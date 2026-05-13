@@ -13,6 +13,7 @@ export interface ClinicSettingsDto {
   emailNotificationsEnabled: boolean;
   smsNotificationsEnabled: boolean;
   sessionTimeoutMinutes: number;
+  appointmentBufferMinutes: number;
 }
 
 export interface UpdateClinicSettingsRequest {
@@ -27,6 +28,7 @@ export interface UpdateClinicSettingsRequest {
   emailNotificationsEnabled: boolean;
   smsNotificationsEnabled: boolean;
   sessionTimeoutMinutes: number;
+  appointmentBufferMinutes?: number;
 }
 
 export interface UserDto {

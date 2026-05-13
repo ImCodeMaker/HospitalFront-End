@@ -38,7 +38,7 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <dt className="text-xs text-slate-500 mb-0.5">{label}</dt>
-      <dd className="text-sm text-white">{value || "—"}</dd>
+      <dd className="text-sm text-ink">{value || "—"}</dd>
     </div>
   );
 }
@@ -81,14 +81,14 @@ export default function PortalPage() {
   return (
     <div className="flex flex-col gap-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold text-white">Mi Portal</h1>
+        <h1 className="text-2xl font-bold text-ink">Mi Portal</h1>
         <p className="text-sm text-slate-500 mt-0.5">Acceso a tu historial médico</p>
       </motion.div>
 
       <div className="flex gap-1 border-b border-surface-800">
         {TABS.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t.id ? "border-brand-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"}`}>
+            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t.id ? "border-brand-500 text-ink" : "border-transparent text-slate-500 hover:text-slate-300"}`}>
             {t.label}
           </button>
         ))}
@@ -138,8 +138,8 @@ export default function PortalPage() {
         {tab === "appointments" && (
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <button onClick={() => setUpcomingOnly(true)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${upcomingOnly ? "bg-brand-600 text-white" : "text-slate-500 hover:text-white bg-surface-800"}`}>Próximas</button>
-              <button onClick={() => setUpcomingOnly(false)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${!upcomingOnly ? "bg-brand-600 text-white" : "text-slate-500 hover:text-white bg-surface-800"}`}>Todas</button>
+              <button onClick={() => setUpcomingOnly(true)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${upcomingOnly ? "bg-brand-600 text-white" : "text-slate-500 hover:text-ink bg-surface-800"}`}>Próximas</button>
+              <button onClick={() => setUpcomingOnly(false)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${!upcomingOnly ? "bg-brand-600 text-white" : "text-slate-500 hover:text-ink bg-surface-800"}`}>Todas</button>
             </div>
             <div className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
               {apptLoading ? <div className="flex items-center justify-center py-12"><span className="w-6 h-6 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" /></div>
@@ -179,7 +179,7 @@ export default function PortalPage() {
                     <div key={c.id} className="p-5 hover:bg-surface-800/30 transition-colors">
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-medium text-white">{c.specialtyName}</p>
+                          <p className="font-medium text-ink">{c.specialtyName}</p>
                           <p className="text-xs text-slate-500 mt-0.5">{c.doctorName} · {formatDate(c.date)}</p>
                         </div>
                         <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${c.status === "Finished" ? "bg-emerald-500/15 text-emerald-400" : "bg-blue-500/15 text-blue-400"}`}>
@@ -213,7 +213,7 @@ export default function PortalPage() {
                       <tr key={inv.id} className="border-b border-surface-800 last:border-0">
                         <td className="px-4 py-3 font-mono text-xs text-slate-300">{inv.invoiceNumber}</td>
                         <td className="px-4 py-3 text-slate-500">{formatDate(inv.createdAt)}</td>
-                        <td className="px-4 py-3 text-white">{fmt(inv.totalAmount)}</td>
+                        <td className="px-4 py-3 text-ink">{fmt(inv.totalAmount)}</td>
                         <td className="px-4 py-3 text-emerald-400">{fmt(inv.paidAmount)}</td>
                         <td className={`px-4 py-3 font-semibold ${inv.balanceDue > 0 ? "text-red-400" : "text-emerald-400"}`}>{fmt(inv.balanceDue)}</td>
                         <td className="px-4 py-3">

@@ -1,31 +1,168 @@
 @import "tailwindcss";
 
-@theme {
-  --color-brand-50: #f0f9ff;
-  --color-brand-100: #e0f2fe;
-  --color-brand-200: #bae6fd;
-  --color-brand-300: #7dd3fc;
-  --color-brand-400: #38bdf8;
-  --color-brand-500: #0ea5e9;
-  --color-brand-600: #0284c7;
-  --color-brand-700: #0369a1;
-  --color-brand-800: #075985;
-  --color-brand-900: #0c4a6e;
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+@theme {
+  /* Brand — lavender / purple */
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+
+  /* Surface — overridden at runtime by [data-theme]. Cool cream like Deel. */
+  --color-surface-50: #ffffff;
+  --color-surface-100: #ffffff;       /* card */
+  --color-surface-200: #f4f1f7;       /* page bg — subtle lavender tint */
+  --color-surface-300: #ece8f1;       /* subtle */
+  --color-surface-700: #e6e2eb;       /* light border */
+  --color-surface-800: #ece8f1;       /* divider */
+  --color-surface-900: #ffffff;       /* card alias */
+  --color-surface-950: #f4f1f7;       /* page alias */
+
+  /* Slate — text shades */
+  --color-slate-100: #1c1b1f;
+  --color-slate-200: #2a2830;
+  --color-slate-300: #3a3741;
+  --color-slate-400: #6b6577;
+  --color-slate-500: #8a8597;
+  --color-slate-600: #aaa6b4;
+  --color-slate-700: #d3cfbf;
+
+  /* Ink */
+  --color-ink: #1c1b1f;
+  --color-ink-mute: #6b6577;
+
+  /* Accent cards */
+  --color-lavender-100: #ede4ff;
+  --color-lavender-200: #d9c8ff;
+  --color-lavender-300: #b89eff;
+  --color-lavender-500: #7c3aed;
+  --color-lavender-700: #4c1d95;
+
+  --color-mint-100: #d9f2dc;
+  --color-mint-200: #b5e4be;
+  --color-mint-500: #4ea561;
+  --color-mint-700: #2f6b3d;
+
+  --color-navy-100: #1a1830;
+  --color-navy-500: #2a2745;
+  --color-navy-700: #14122a;
+  --color-navy-900: #08071a;
 
   --font-sans: "Inter", system-ui, sans-serif;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+/* Dark theme overrides */
+:root[data-theme="dark"] {
+  --color-surface-50: #18171c;
+  --color-surface-100: #1f1d28;   /* card */
+  --color-surface-200: #15131c;   /* page bg */
+  --color-surface-300: #2a2734;   /* subtle */
+  --color-surface-700: #3a3645;   /* border */
+  --color-surface-800: #2a2734;   /* divider */
+  --color-surface-900: #1f1d28;   /* card alias */
+  --color-surface-950: #15131c;   /* page alias */
+
+  --color-slate-100: #f5f3f8;
+  --color-slate-200: #e2dfea;
+  --color-slate-300: #c9c5d4;
+  --color-slate-400: #9a93ad;
+  --color-slate-500: #7a7390;
+  --color-slate-600: #5b556d;
+  --color-slate-700: #3a3743;
+
+  --color-ink: #f5f3f8;
+  --color-ink-mute: #9a93ad;
+
+  /* Brand stays vivid in dark so nav pills remain lavender-tinted. */
+  --color-brand-50: #2a2240;
+  --color-brand-100: #3a2e58;
+  --color-brand-200: #4a3a6e;
+  --color-brand-300: #5b46a0;
+
+  --color-lavender-100: #2a2240;
+  --color-lavender-200: #3a2e58;
+  --color-lavender-300: #5b46a0;
+  --color-lavender-500: #a78bfa;
+  --color-lavender-700: #d9c8ff;
+
+  --color-mint-100: #1a3520;
+  --color-mint-200: #244a2e;
+  --color-mint-500: #6fc483;
+  --color-mint-700: #b5e4be;
+
+  --color-navy-100: #0a0917;
+  --color-navy-500: #1a1830;
+  --color-navy-700: #08071a;
+  --color-navy-900: #050410;
+}
+
+/* Navbar pill / chip surfaces — keep translucent on dark. Excludes dropdowns
+   (`shadow-xl` indicates a floating menu which needs an opaque background). */
+:root[data-theme="dark"] header button.bg-white\/60,
+:root[data-theme="dark"] header button.bg-white\/40 {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+:root[data-theme="dark"] header button.bg-white\/60:hover,
+:root[data-theme="dark"] header button.bg-white\/40:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+:root[data-theme="dark"] header > div > div.bg-white {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+/* Active nav pill (white bg with shadow-sm) stays bright */
+:root[data-theme="dark"] header a.bg-white.shadow-sm {
+  background: #f5f3f8 !important;
+  color: #15131c !important;
+}
+/* Floating dropdowns inside the header use an opaque dark surface */
+:root[data-theme="dark"] header .shadow-xl.bg-white {
+  background: #1f1d28 !important;
+  color: #f5f3f8 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Boost inactive nav text contrast on dark gradient */
+:root[data-theme="dark"] header nav a,
+:root[data-theme="dark"] header nav button {
+  color: rgba(245, 243, 248, 0.88) !important;
+}
+:root[data-theme="dark"] header nav a:hover,
+:root[data-theme="dark"] header nav button:hover {
+  color: #ffffff !important;
+}
+:root[data-theme="dark"] header a.bg-white.shadow-sm {
+  color: #15131c !important;
+}
+
+/* Global bg-white in cards → swap to elevated dark surface in dark mode */
+:root[data-theme="dark"] main .bg-white {
+  background: #1f1d28 !important;
+}
+:root[data-theme="dark"] main .bg-white.shadow-sm,
+:root[data-theme="dark"] main [class*="shadow-"][class*="bg-white"] {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 6px 18px rgba(0,0,0,0.4) !important;
+}
+
+/* Modal overlay + content for dark */
+:root[data-theme="dark"] [class*="bg-black/60"] {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Soften the page background's gradient transition from navbar */
+:root[data-theme="dark"] body {
+  background: #15131c;
 }
 
 @layer base {
@@ -39,9 +176,12 @@
   }
 
   body {
-    @apply bg-surface-950 text-slate-100 font-sans;
+    background: var(--color-surface-200);
+    color: var(--color-ink);
+    @apply font-sans;
     overflow: hidden;
     user-select: none;
+    font-feature-settings: "cv11", "ss01";
   }
 
   ::-webkit-scrollbar {
@@ -50,15 +190,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-surface-900;
+    background: var(--color-surface-300);
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-surface-700 rounded-full;
+    background: var(--color-surface-700);
+    border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-brand-600;
+    background: var(--color-brand-400);
   }
 }
 
@@ -68,5 +209,11 @@
   }
   .no-drag {
     -webkit-app-region: no-drag;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

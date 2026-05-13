@@ -24,6 +24,8 @@ export interface AddPrescriptionRequest {
   routeOfAdministration?: string;
   specialInstructions?: string;
   medicationId?: string;
+  rxCui?: string;
+  acknowledgeInteractions?: boolean;
 }
 
 export interface DrugInteractionAlert {

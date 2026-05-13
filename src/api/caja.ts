@@ -40,4 +40,11 @@ export const cajaApi = {
     const { data } = await api.get<CashTransactionDto[]>(`/caja/${shiftId}/transactions`);
     return data;
   },
+
+  downloadReport: async (shiftId: string): Promise<Blob> => {
+    const { data } = await api.get<Blob>(`/caja/${shiftId}/report`, {
+      responseType: "blob",
+    });
+    return data;
+  },
 };

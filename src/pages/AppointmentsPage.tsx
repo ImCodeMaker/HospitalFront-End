@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { appointmentsApi } from "@/api/appointments";
 import { patientsApi } from "@/api/patients";
+import { settingsApi } from "@/api/settings";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
 import { SkeletonRow } from "@/components/ui/Skeleton";
@@ -15,7 +16,7 @@ import type {
 } from "@/types/appointments";
 
 const INPUT =
-  "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
+  "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
 const SELECT = INPUT + " appearance-none cursor-pointer";
 const LABEL = "block text-xs font-medium text-slate-400 mb-1";
 
@@ -88,6 +89,9 @@ function CreateAppointmentForm({
     },
   });
 
+  const { data: clinic } = useQuery({ queryKey: ["clinic-settings"], queryFn: settingsApi.getClinicSettings });
+  const bufferMin = clinic?.appointmentBufferMinutes ?? 10;
+
   const set = <K extends keyof CreateAppointmentRequest>(
     k: K,
     v: CreateAppointmentRequest[K]
@@ -111,7 +115,7 @@ function CreateAppointmentForm({
           onChange={(e) => setPatientSearch(e.target.value)}
         />
         {patientsData && patientsData.items.length > 0 && !form.patientId && (
-          <div className="mt-1 bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
+          <div className="mt-1 bg-surface-100 border border-surface-700/60 rounded-lg overflow-hidden">
             {patientsData.items.map((p) => (
               <button
                 key={p.id}
@@ -120,7 +124,7 @@ function CreateAppointmentForm({
                   set("patientId", p.id);
                   setPatientSearch(p.fullName);
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-white hover:bg-surface-700 transition-colors border-b border-surface-700 last:border-0"
+                className="w-full text-left px-3 py-2 text-sm text-ink hover:bg-surface-700 transition-colors border-b border-surface-700 last:border-0"
               >
                 {p.fullName}{" "}
                 <span className="text-slate-500 text-xs">— {p.documentNumber}</span>
@@ -164,6 +168,7 @@ function CreateAppointmentForm({
             onChange={(e) => set("scheduledDate", e.target.value)}
             required
           />
+          <p className="text-xs text-slate-500 mt-1">Buffer entre citas: <span className="text-ink/70 font-medium">{bufferMin} min</span></p>
         </div>
         <div>
           <label className={LABEL}>Duración (min) *</label>
@@ -200,7 +205,7 @@ function CreateAppointmentForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-surface-800 transition-colors"
+          className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-ink hover:bg-surface-800 transition-colors"
         >
           Cancelar
         </button>
@@ -269,8 +274,8 @@ export default function AppointmentsPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-2xl font-bold text-white">Citas</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Citas</h1>
+          <p className="text-sm text-ink/60 mt-1">
             {totalCount > 0 ? `${totalCount} citas encontradas` : "Agenda de citas"}
           </p>
         </div>
@@ -293,7 +298,7 @@ export default function AppointmentsPage() {
         className="flex gap-3 flex-wrap"
       >
         <select
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer min-w-[160px]"
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none appearance-none cursor-pointer min-w-[160px]"
           value={statusFilter}
           onChange={(e) => {
             setStatusFilter(e.target.value as AppointmentStatus | "");
@@ -309,7 +314,7 @@ export default function AppointmentsPage() {
 
         <input
           type="date"
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none"
           value={dateFrom}
           onChange={(e) => {
             setDateFrom(e.target.value);
@@ -319,7 +324,7 @@ export default function AppointmentsPage() {
         <span className="text-slate-500 self-center text-sm">—</span>
         <input
           type="date"
-          className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none"
           value={dateTo}
           onChange={(e) => {
             setDateTo(e.target.value);
@@ -333,7 +338,7 @@ export default function AppointmentsPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.25 }}
-        className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden"
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden"
       >
         {isError ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -347,7 +352,7 @@ export default function AppointmentsPage() {
                   {["Paciente", "Tipo", "Fecha / Hora", "Duración", "Estado", ""].map((h) => (
                     <th
                       key={h}
-                      className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                      className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider"
                     >
                       {h}
                     </th>
@@ -377,7 +382,7 @@ export default function AppointmentsPage() {
                         key={appt.id}
                         className="border-b border-surface-800 last:border-0 hover:bg-surface-800/50 transition-colors"
                       >
-                        <td className="px-4 py-3 font-medium text-white">
+                        <td className="px-4 py-3 font-medium text-ink">
                           {appt.patientName}
                         </td>
                         <td className="px-4 py-3">

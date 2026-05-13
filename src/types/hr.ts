@@ -102,7 +102,8 @@ export interface CreateRecruitmentApplicationRequest {
 }
 
 export interface EmployeeListParams {
-  search?: string;
+  role?: UserRole | "";
+  status?: "Active" | "Inactive" | "";
   page?: number;
   pageSize?: number;
 }
@@ -116,8 +117,8 @@ export interface EmployeePaginatedResult {
 }
 
 export interface PayrollListParams {
-  period?: string;
-  status?: PayrollStatus | "";
+  page?: number;
+  pageSize?: number;
 }
 
 export interface RecruitmentListParams {

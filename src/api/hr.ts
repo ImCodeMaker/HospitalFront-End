@@ -1,6 +1,5 @@
 import { api } from "@/lib/axios";
 import type {
-  EmployeeDto,
   EmployeePaginatedResult,
   EmployeeListParams,
   EmployeePerformanceDto,
@@ -9,7 +8,6 @@ import type {
   RecruitmentApplicationDto,
   RecruitmentListParams,
   CreateEmployeeRequest,
-  UpdateEmployeeRequest,
   GeneratePayrollRequest,
   CreateRecruitmentApplicationRequest,
   RecruitmentStage,
@@ -19,7 +17,8 @@ export const hrApi = {
   listEmployees: async (params: EmployeeListParams = {}): Promise<EmployeePaginatedResult> => {
     const { data } = await api.get<EmployeePaginatedResult>("/hr", {
       params: {
-        search: params.search || undefined,
+        role: params.role || undefined,
+        status: params.status || undefined,
         page: params.page ?? 1,
         pageSize: params.pageSize ?? 20,
       },
@@ -27,15 +26,10 @@ export const hrApi = {
     return data;
   },
 
-  getEmployee: async (id: string): Promise<EmployeeDto> => {
-    const { data } = await api.get<EmployeeDto>(`/hr/${id}`);
-    return data;
-  },
-
   getPerformance: async (
     id: string,
-    from: string,
-    to: string
+    from?: string,
+    to?: string
   ): Promise<EmployeePerformanceDto> => {
     const { data } = await api.get<EmployeePerformanceDto>(
       `/hr/${id}/performance`,
@@ -49,15 +43,14 @@ export const hrApi = {
     return data;
   },
 
-  updateEmployee: async (id: string, body: UpdateEmployeeRequest): Promise<void> => {
-    await api.put(`/hr/${id}`, body);
-  },
-
-  listPayroll: async (params: PayrollListParams = {}): Promise<PayrollRecordDto[]> => {
-    const { data } = await api.get<PayrollRecordDto[]>("/payroll", {
+  listPayrollByEmployee: async (
+    employeeId: string,
+    params: PayrollListParams = {}
+  ): Promise<PayrollRecordDto[]> => {
+    const { data } = await api.get<PayrollRecordDto[]>(`/payroll/employee/${employeeId}`, {
       params: {
-        period: params.period || undefined,
-        status: params.status || undefined,
+        page: params.page ?? 1,
+        pageSize: params.pageSize ?? 20,
       },
     });
     return data;

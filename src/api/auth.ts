@@ -16,12 +16,23 @@ export interface LoginResponse {
   specialtyId?: string;
 }
 
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  role: AuthUser["roles"][number];
+  specialtyId?: string;
+}
+
 export const authApi = {
   login: (data: LoginPayload) =>
     api.post<LoginResponse>("/auth/login", data),
 
   loginWithTotp: (data: { email: string; password: string; totpCode: string }) =>
     api.post<LoginResponse>("/auth/2fa/login", data),
+
+  register: (data: RegisterPayload) =>
+    api.post<{ id: string }>("/auth/register", data),
 
   refresh: () =>
     api.post<{ accessToken: string; expiresAt: string }>("/auth/refresh", {}),

@@ -6,6 +6,21 @@ export type InvoiceStatus =
   | "PendingInsurance"
   | "RequiresCollection";
 
+export type NcfType =
+  | "CreditoFiscal"
+  | "Consumo"
+  | "RegimenEspecial"
+  | "Gubernamental"
+  | "Exportaciones";
+
+export const NCF_TYPE_LABEL: Record<NcfType, string> = {
+  CreditoFiscal: "B01 — Crédito Fiscal",
+  Consumo: "B02 — Consumo",
+  RegimenEspecial: "B14 — Régimen Especial",
+  Gubernamental: "B15 — Gubernamental",
+  Exportaciones: "B16 — Exportaciones",
+};
+
 export type PaymentMethod =
   | "Cash"
   | "CreditCard"
@@ -43,10 +58,13 @@ export interface PaymentDto {
 export interface InvoiceDto {
   id: string;
   invoiceNumber: string;
+  ncf?: string;
+  ncfType?: NcfType;
   patientId: string;
   patientName: string;
   consultId?: string;
   status: InvoiceStatus;
+  insuranceDenialReason?: string;
   subtotal: number;
   discountAmount: number;
   taxAmount: number;
@@ -89,6 +107,7 @@ export interface CreateLineItemRequest {
 export interface CreateInvoiceRequest {
   consultId?: string;
   patientId: string;
+  ncfType?: NcfType;
   lineItems: CreateLineItemRequest[];
   discountAmount?: number;
   notes?: string;

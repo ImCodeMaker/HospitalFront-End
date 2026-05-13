@@ -1,7 +1,6 @@
 import { api } from "@/lib/axios";
 import type {
   CreateAppointmentRequest,
-  UpdateAppointmentRequest,
   PatchAppointmentStatusRequest,
   AppointmentListParams,
   AppointmentPaginatedResult,
@@ -30,21 +29,10 @@ export const appointmentsApi = {
     return data;
   },
 
-  update: async (
-    id: string,
-    body: UpdateAppointmentRequest
-  ): Promise<void> => {
-    await api.put(`/appointments/${id}`, body);
-  },
-
   patchStatus: async (
     id: string,
     body: PatchAppointmentStatusRequest
   ): Promise<void> => {
     await api.patch(`/appointments/${id}/status`, body);
-  },
-
-  delete: async (id: string): Promise<void> => {
-    await api.delete(`/appointments/${id}`);
   },
 };

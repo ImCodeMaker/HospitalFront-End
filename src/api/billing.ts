@@ -54,7 +54,7 @@ export const billingApi = {
   },
 
   downloadPdf: async (id: string): Promise<Blob> => {
-    const { data } = await api.get<Blob>(`/billing/${id}/pdf`, {
+    const { data } = await api.get<Blob>(`/pdf/invoice/${id}`, {
       responseType: "blob",
     });
     return data;

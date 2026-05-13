@@ -148,6 +148,17 @@ const navItems: NavItem[] = [
       </svg>
     ),
   },
+  {
+    to: "/audit",
+    label: "Auditoría",
+    tourId: "nav-audit",
+    roles: ["Admin"],
+    icon: (
+      <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v2H7V5zm0 4h6v1H7V9zm0 3h6v1H7v-1z" clipRule="evenodd" />
+      </svg>
+    ),
+  },
 ];
 
 export function Sidebar() {
@@ -192,7 +203,7 @@ export function Sidebar() {
                 )}
                 {item.icon}
                 {/* Tooltip */}
-                <span className="absolute left-full ml-2 px-2 py-1 bg-surface-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-surface-700">
+                <span className="absolute left-full ml-2 px-2 py-1 bg-surface-800 text-ink text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-surface-700">
                   {item.label}
                 </span>
               </>

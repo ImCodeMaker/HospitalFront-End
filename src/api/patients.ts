@@ -73,4 +73,15 @@ export const patientsApi = {
   ): Promise<void> => {
     await api.patch(`/patients/${id}/status`, body);
   },
+
+  exportData: async (id: string): Promise<Blob> => {
+    const { data } = await api.get<Blob>(`/patients/${id}/export`, {
+      responseType: "blob",
+    });
+    return data;
+  },
+
+  anonymize: async (id: string): Promise<void> => {
+    await api.post(`/patients/${id}/anonymize`);
+  },
 };

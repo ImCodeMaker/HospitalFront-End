@@ -7,7 +7,7 @@ import { SkeletonRow } from "@/components/ui/Skeleton";
 import { Pagination } from "@/components/ui/Pagination";
 import type { CreateMedicationRequest, Presentation, StockTransactionType } from "@/types/inventory";
 
-const INPUT = "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
+const INPUT = "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full";
 const SELECT = INPUT + " appearance-none cursor-pointer";
 const LABEL = "block text-xs font-medium text-slate-400 mb-1";
 
@@ -66,8 +66,8 @@ export default function InventoryPage() {
     <div className="flex flex-col gap-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Inventario</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{totalCount > 0 ? `${totalCount} medicamentos` : "Control de medicamentos"}</p>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Inventario</h1>
+          <p className="text-sm text-ink/60 mt-1">{totalCount > 0 ? `${totalCount} medicamentos` : "Control de medicamentos"}</p>
         </div>
         <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
@@ -80,17 +80,17 @@ export default function InventoryPage() {
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
           </svg>
-          <input className="bg-surface-800 border border-surface-700 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full"
+          <input className="bg-surface-100 border border-surface-700/60 rounded-lg pl-9 pr-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none placeholder:text-slate-500 w-full"
             placeholder="Buscar medicamento…" value={search} onChange={(e) => { setSearch(e.target.value); setTimeout(() => setDebouncedSearch(e.target.value), 400); }} />
         </div>
         <button onClick={() => setLowStockOnly(!lowStockOnly)}
-          className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-colors ${lowStockOnly ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "border-surface-700 text-slate-400 hover:text-white"}`}>
+          className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-colors ${lowStockOnly ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "border-surface-700 text-slate-400 hover:text-ink"}`}>
           Stock bajo
         </button>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}
-        className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden">
         {isError ? (
           <div className="flex items-center justify-center py-16"><p className="text-slate-400">Error al cargar.</p></div>
         ) : (
@@ -99,7 +99,7 @@ export default function InventoryPage() {
               <thead>
                 <tr className="border-b border-surface-800">
                   {["Medicamento", "Presentación", "Stock", "Mín.", "Precio", "Estado", ""].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-semibold text-ink/50 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -110,13 +110,13 @@ export default function InventoryPage() {
                   ) : medications.map((m) => (
                     <tr key={m.id} className="border-b border-surface-800 last:border-0 hover:bg-surface-800/30 transition-colors">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-white">{m.genericName}</p>
+                        <p className="font-medium text-ink">{m.genericName}</p>
                         {m.brandName && <p className="text-xs text-slate-500">{m.brandName}</p>}
                         {m.concentration && <p className="text-xs text-slate-600">{m.concentration}</p>}
                       </td>
                       <td className="px-4 py-3 text-slate-400">{PRESENTATION_LABELS[m.presentation]}</td>
                       <td className="px-4 py-3">
-                        <span className={`font-semibold ${m.currentStock === 0 ? "text-red-400" : m.isLowStock ? "text-amber-400" : "text-white"}`}>
+                        <span className={`font-semibold ${m.currentStock === 0 ? "text-red-400" : m.isLowStock ? "text-amber-400" : "text-ink"}`}>
                           {m.currentStock}
                         </span>
                       </td>
@@ -168,7 +168,7 @@ export default function InventoryPage() {
           </div>
           {createMutation.isError && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">Error al crear.</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-surface-800">Cancelar</button>
+            <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-ink hover:bg-surface-800">Cancelar</button>
             <button type="submit" disabled={createMutation.isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white disabled:opacity-50 flex items-center gap-2">
               {createMutation.isPending && <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               Crear
@@ -193,7 +193,7 @@ export default function InventoryPage() {
           <div><label className={LABEL}>Notas</label><input className={INPUT} value={stockTxForm.notes} onChange={(e) => setStockTxForm((p) => ({ ...p, notes: e.target.value }))} /></div>
           {stockMutation.isError && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">Error al ajustar.</p>}
           <div className="flex justify-end gap-3 pt-1">
-            <button type="button" onClick={() => setShowStockModal(null)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-surface-800">Cancelar</button>
+            <button type="button" onClick={() => setShowStockModal(null)} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-ink hover:bg-surface-800">Cancelar</button>
             <button type="submit" disabled={stockMutation.isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white disabled:opacity-50 flex items-center gap-2">
               {stockMutation.isPending && <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               Guardar

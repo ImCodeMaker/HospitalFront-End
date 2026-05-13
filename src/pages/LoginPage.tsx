@@ -66,14 +66,14 @@ export default function LoginPage() {
             </svg>
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">Lova Salud</h1>
+            <h1 className="text-2xl font-bold text-ink">Lova Salud</h1>
             <p className="text-xs text-slate-500 mt-0.5">Clinical Management System</p>
           </div>
         </div>
 
         {/* Card */}
         <div className="bg-surface-900 border border-surface-700/50 rounded-2xl p-6 shadow-2xl">
-          <h2 className="text-lg font-semibold text-white mb-1">
+          <h2 className="text-lg font-semibold text-ink mb-1">
             {needsTotp ? "Verificación 2FA" : "Iniciar sesión"}
           </h2>
           <p className="text-sm text-slate-400 mb-6">
@@ -108,7 +108,7 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition"
+                      className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-ink placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition"
                       placeholder="usuario@lovasalud.com"
                       autoComplete="email"
                     />
@@ -122,7 +122,7 @@ export default function LoginPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition"
+                      className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-ink placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition"
                       placeholder="••••••••"
                       autoComplete="current-password"
                     />
@@ -146,7 +146,7 @@ export default function LoginPage() {
                     required
                     value={totpCode}
                     onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ""))}
-                    className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition tracking-[0.4em] text-center text-xl font-mono"
+                    className="w-full bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-ink placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition tracking-[0.4em] text-center text-xl font-mono"
                     placeholder="000000"
                     autoFocus
                     autoComplete="one-time-code"

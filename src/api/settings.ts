@@ -9,6 +9,15 @@ import type {
   InsuranceCompanyDto,
   CreateInsuranceCompanyRequest,
 } from "@/types/settings";
+import type { UserRole } from "@/store/authStore";
+
+export interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: UserRole;
+  specialtyId?: string;
+}
 
 export const settingsApi = {
   getClinicSettings: async (): Promise<ClinicSettingsDto> => {
@@ -41,6 +50,14 @@ export const settingsApi = {
     }
   },
 
+  updateUser: async (id: string, body: UpdateUserRequest): Promise<void> => {
+    await api.put(`/users/${id}`, body);
+  },
+
+  resetUserPassword: async (id: string, newPassword: string): Promise<void> => {
+    await api.post(`/users/${id}/reset-password`, { newPassword });
+  },
+
   listSpecialties: async (): Promise<SpecialtyDto[]> => {
     const { data } = await api.get<SpecialtyDto[]>("/specialties");
     return data;
@@ -52,18 +69,14 @@ export const settingsApi = {
   },
 
   listInsuranceCompanies: async (): Promise<InsuranceCompanyDto[]> => {
-    const { data } = await api.get<InsuranceCompanyDto[]>("/insurance-companies");
+    const { data } = await api.get<InsuranceCompanyDto[]>("/insurancecompanies");
     return data;
   },
 
   createInsuranceCompany: async (
     body: CreateInsuranceCompanyRequest
   ): Promise<{ id: string }> => {
-    const { data } = await api.post<{ id: string }>("/insurance-companies", body);
+    const { data } = await api.post<{ id: string }>("/insurancecompanies", body);
     return data;
-  },
-
-  toggleInsuranceCompanyActive: async (id: string): Promise<void> => {
-    await api.patch(`/insurance-companies/${id}/toggle-active`);
   },
 };

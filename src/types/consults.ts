@@ -23,16 +23,31 @@ export interface ConsultDto {
   diagnosisCodes?: string | null;
   diagnosisDescription?: string | null;
   treatmentPlan?: string | null;
-  specialtyData?: Record<string, unknown> | null;
+  specialtyData?: string | null;
+  dentalChart?: string | null;
   startedAt?: string | null;
   finishedAt?: string | null;
   createdAt: string;
 }
 
 export interface CreateConsultRequest {
-  patientId: string;
+  patientId?: string;
   specialtyId: string;
   chiefComplaint?: string;
+  quickPatient?: QuickPatientRequest;
+}
+
+export interface QuickPatientRequest {
+  firstName: string;
+  lastName: string;
+  documentType: "Cedula" | "Passport" | "Other";
+  documentNumber: string;
+  birthDate: string;
+  gender: "Male" | "Female" | "Other";
+  nationality?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
 }
 
 export interface UpdateConsultRequest {
@@ -49,7 +64,8 @@ export interface UpdateConsultRequest {
   diagnosisCodes?: string | null;
   diagnosisDescription?: string | null;
   treatmentPlan?: string | null;
-  specialtyData?: Record<string, unknown> | null;
+  specialtyData?: string | null;
+  dentalChart?: string | null;
 }
 
 export interface PatchConsultStatusRequest {

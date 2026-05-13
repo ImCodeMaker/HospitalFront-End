@@ -13,6 +13,23 @@ export default defineConfig(async () => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "apollo": ["@apollo/client", "graphql"],
+          "tanstack": ["@tanstack/react-query"],
+          "motion": ["framer-motion", "gsap"],
+          "tauri": ["@tauri-apps/api", "@tauri-apps/plugin-http", "@tauri-apps/plugin-opener", "@tauri-apps/plugin-store"],
+          "signalr": ["@microsoft/signalr"],
+          "qrcode": ["qrcode"],
+          "axios": ["axios"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
   clearScreen: false,
   server: {
     port: 1420,

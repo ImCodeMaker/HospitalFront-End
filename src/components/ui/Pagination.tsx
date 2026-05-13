@@ -99,7 +99,7 @@ function PageBtn({ children, onClick, disabled, active, "aria-label": ariaLabel 
           ? "bg-brand-600 text-white"
           : disabled
           ? "text-slate-700 cursor-not-allowed"
-          : "text-slate-400 hover:bg-surface-800 hover:text-white"
+          : "text-slate-400 hover:bg-surface-800 hover:text-ink"
         }
       `}
     >

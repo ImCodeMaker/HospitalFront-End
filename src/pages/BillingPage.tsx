@@ -10,7 +10,9 @@ import type {
   LineItemType,
   CreateLineItemRequest,
   InvoiceListParams,
+  NcfType,
 } from "@/types/billing";
+import { NCF_TYPE_LABEL } from "@/types/billing";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -113,7 +115,7 @@ function Spinner({ small = false }: { small?: boolean }) {
 // ---------------------------------------------------------------------------
 
 const inputCls =
-  "bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none w-full placeholder:text-slate-500";
+  "bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none w-full placeholder:text-slate-500";
 
 const labelCls = "block text-xs text-slate-400 mb-1";
 
@@ -160,10 +162,10 @@ function StatsBar({ invoices }: { invoices: InvoiceDto[] }) {
       {stats.map((s) => (
         <div
           key={s.label}
-          className="bg-surface-900 border border-surface-800 rounded-2xl p-4"
+          className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-4"
         >
           <p className="text-xs text-slate-400 mb-1">{s.label}</p>
-          <p className="text-xl font-bold text-white truncate">{s.value}</p>
+          <p className="text-xl font-bold text-ink truncate">{s.value}</p>
           <p className="text-xs text-slate-500 mt-0.5">{s.sub}</p>
         </div>
       ))}
@@ -212,7 +214,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
 
   return (
     <motion.div
-      className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden"
+      className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
@@ -220,16 +222,28 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-surface-800">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-white">
-            {invoice.invoiceNumber}
-          </span>
-          {statusBadge(invoice.status)}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold text-ink">
+              {invoice.invoiceNumber}
+            </span>
+            {statusBadge(invoice.status)}
+          </div>
+          {invoice.ncf && (
+            <span className="text-xs text-slate-500">
+              NCF <span className="font-mono text-slate-300">{invoice.ncf}</span> ({invoice.ncfType ? NCF_TYPE_LABEL[invoice.ncfType] : "—"})
+            </span>
+          )}
+          {invoice.insuranceDenialReason && (
+            <span className="text-xs text-rose-500">
+              Aseguradora denegó: {invoice.insuranceDenialReason}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={downloadPdf}
-            className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition flex items-center gap-1.5"
           >
             <svg
               viewBox="0 0 20 20"
@@ -272,7 +286,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
           )}
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-ink hover:bg-surface-800 transition"
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path
@@ -290,12 +304,12 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
         <div className="space-y-4">
           <div>
             <p className={labelCls}>Paciente</p>
-            <p className="text-sm text-white font-medium">{invoice.patientName}</p>
+            <p className="text-sm text-ink font-medium">{invoice.patientName}</p>
           </div>
           <div className="bg-surface-800/60 rounded-xl p-4 space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-slate-400">Subtotal</span>
-              <MoneyDisplay amount={invoice.subtotal} className="text-white" />
+              <MoneyDisplay amount={invoice.subtotal} className="text-ink" />
             </div>
             {invoice.discountAmount > 0 && (
               <div className="flex justify-between">
@@ -309,7 +323,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
             {invoice.taxAmount > 0 && (
               <div className="flex justify-between">
                 <span className="text-slate-400">ITBIS</span>
-                <MoneyDisplay amount={invoice.taxAmount} className="text-white" />
+                <MoneyDisplay amount={invoice.taxAmount} className="text-ink" />
               </div>
             )}
             {invoice.insuranceCoverageAmount > 0 && (
@@ -323,13 +337,13 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
             )}
             <div className="border-t border-surface-700 pt-2 flex justify-between font-semibold">
               <span className="text-slate-300">Total</span>
-              <MoneyDisplay amount={invoice.totalAmount} className="text-white" />
+              <MoneyDisplay amount={invoice.totalAmount} className="text-ink" />
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Responsabilidad paciente</span>
               <MoneyDisplay
                 amount={invoice.patientResponsibilityAmount}
-                className="text-white"
+                className="text-ink"
               />
             </div>
             <div className="flex justify-between">
@@ -340,7 +354,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
               />
             </div>
             <div className="border-t border-surface-700 pt-2 flex justify-between font-bold">
-              <span className="text-white">Balance</span>
+              <span className="text-ink">Balance</span>
               <MoneyDisplay
                 amount={invoice.balanceDue}
                 className={invoice.balanceDue > 0 ? "text-amber-400" : "text-emerald-400"}
@@ -380,7 +394,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
                       key={item.id}
                       className="border-t border-surface-800 hover:bg-surface-800/40"
                     >
-                      <td className="px-3 py-2.5 text-white">
+                      <td className="px-3 py-2.5 text-ink">
                         <div>{item.description}</div>
                         <div className="text-xs text-slate-500">{item.type}</div>
                       </td>
@@ -396,7 +410,7 @@ function InvoiceDetailPanel({ invoice, onClose, onRefresh }: InvoiceDetailProps)
                       <td className="px-3 py-2.5 text-right">
                         <MoneyDisplay
                           amount={item.patientAmount}
-                          className="text-white font-medium"
+                          className="text-ink font-medium"
                         />
                       </td>
                     </tr>
@@ -524,16 +538,16 @@ function PaymentModal({ invoice, onClose, onSuccess }: PaymentModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <motion.div
-        className="bg-surface-900 border border-surface-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl"
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-6 w-full max-w-md mx-4 shadow-2xl"
         initial={{ scale: 0.95, opacity: 0, y: 8 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-white">Registrar Pago</h2>
+          <h2 className="text-base font-semibold text-ink">Registrar Pago</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-ink hover:bg-surface-800 transition"
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path
@@ -611,7 +625,7 @@ function PaymentModal({ invoice, onClose, onSuccess }: PaymentModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition"
+              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition"
             >
               Cancelar
             </button>
@@ -675,18 +689,18 @@ function ResolveClaimModal({ invoice, onClose, onSuccess }: ResolveClaimModalPro
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <motion.div
-        className="bg-surface-900 border border-surface-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl"
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-6 w-full max-w-md mx-4 shadow-2xl"
         initial={{ scale: 0.95, opacity: 0, y: 8 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-white">
+          <h2 className="text-base font-semibold text-ink">
             Resolver Reclamo de Seguro
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-ink hover:bg-surface-800 transition"
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path
@@ -724,7 +738,7 @@ function ResolveClaimModal({ invoice, onClose, onSuccess }: ResolveClaimModalPro
                       ? opt.value
                         ? "bg-emerald-600/20 border-emerald-500/50 text-emerald-300"
                         : "bg-red-600/20 border-red-500/50 text-red-300"
-                      : "bg-surface-800 border-surface-700 text-slate-400 hover:text-white"
+                      : "bg-surface-800 border-surface-700 text-slate-400 hover:text-ink"
                   }`}
                 >
                   {opt.label}
@@ -769,7 +783,7 @@ function ResolveClaimModal({ invoice, onClose, onSuccess }: ResolveClaimModalPro
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition"
+              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition"
             >
               Cancelar
             </button>
@@ -803,6 +817,7 @@ function CreateInvoiceModal({ onClose, onSuccess }: CreateInvoiceModalProps) {
   const [consultId, setConsultId] = useState("");
   const [discountAmount, setDiscountAmount] = useState("0");
   const [notes, setNotes] = useState("");
+  const [ncfType, setNcfType] = useState<NcfType>("Consumo");
   const [error, setError] = useState("");
   const [lineItems, setLineItems] = useState<CreateLineItemRequest[]>([
     { type: "Consultation", description: "", unitPrice: 0, quantity: 1 },
@@ -831,6 +846,7 @@ function CreateInvoiceModal({ onClose, onSuccess }: CreateInvoiceModalProps) {
       billingApi.createInvoice({
         patientId,
         consultId: consultId || undefined,
+        ncfType,
         lineItems,
         discountAmount: parseFloat(discountAmount) || undefined,
         notes: notes || undefined,
@@ -859,16 +875,16 @@ function CreateInvoiceModal({ onClose, onSuccess }: CreateInvoiceModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <motion.div
-        className="bg-surface-900 border border-surface-800 rounded-2xl p-6 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-6 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
         initial={{ scale: 0.95, opacity: 0, y: 8 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-white">Nueva Factura</h2>
+          <h2 className="text-base font-semibold text-ink">Nueva Factura</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-ink hover:bg-surface-800 transition"
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path
@@ -903,6 +919,19 @@ function CreateInvoiceModal({ onClose, onSuccess }: CreateInvoiceModalProps) {
                 className={inputCls}
               />
             </div>
+          </div>
+          <div>
+            <label className={labelCls}>Tipo de NCF (DGII)</label>
+            <select
+              value={ncfType}
+              onChange={(e) => setNcfType(e.target.value as NcfType)}
+              className={inputCls + " appearance-none cursor-pointer"}
+            >
+              {(Object.keys(NCF_TYPE_LABEL) as NcfType[]).map((t) => (
+                <option key={t} value={t}>{NCF_TYPE_LABEL[t]}</option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-500 mt-1">El sistema asigna el siguiente número del rango autorizado.</p>
           </div>
 
           {/* Line items */}
@@ -1058,7 +1087,7 @@ function CreateInvoiceModal({ onClose, onSuccess }: CreateInvoiceModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition"
+              className="flex-1 px-4 py-2.5 rounded-lg text-sm text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition"
             >
               Cancelar
             </button>
@@ -1141,7 +1170,7 @@ export default function BillingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Facturación</h1>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Facturación</h1>
           <p className="text-sm text-slate-400 mt-0.5">
             Gestión de facturas e historial de pagos
           </p>
@@ -1165,7 +1194,7 @@ export default function BillingPage() {
       {!isLoading && !isError && <StatsBar invoices={invoices} />}
 
       {/* Filters */}
-      <div className="bg-surface-900 border border-surface-800 rounded-2xl p-4 space-y-4">
+      <div className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] p-4 space-y-4">
         {/* Status tabs */}
         <div className="flex gap-1 flex-wrap">
           {STATUS_TABS.map((tab) => (
@@ -1178,7 +1207,7 @@ export default function BillingPage() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 statusFilter === tab.value
                   ? "bg-brand-600/20 text-brand-400 border border-brand-500/30"
-                  : "text-slate-400 hover:text-white hover:bg-surface-800"
+                  : "text-slate-400 hover:text-ink hover:bg-surface-800"
               }`}
             >
               {tab.label}
@@ -1205,7 +1234,7 @@ export default function BillingPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por paciente o # factura..."
-              className="bg-surface-800 border border-surface-700 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none w-full placeholder:text-slate-500"
+              className="bg-surface-100 border border-surface-700/60 rounded-lg pl-9 pr-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none w-full placeholder:text-slate-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -1214,7 +1243,7 @@ export default function BillingPage() {
               type="date"
               value={fromDate}
               onChange={(e) => { setFromDate(e.target.value); setPage(1); }}
-              className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"
+              className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -1223,13 +1252,13 @@ export default function BillingPage() {
               type="date"
               value={toDate}
               onChange={(e) => { setToDate(e.target.value); setPage(1); }}
-              className="bg-surface-800 border border-surface-700 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"
+              className="bg-surface-100 border border-surface-700/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:ring-2 focus:ring-brand-500 focus:outline-none"
             />
           </div>
           {(fromDate || toDate || search) && (
             <button
               onClick={() => { setSearch(""); setFromDate(""); setToDate(""); setPage(1); }}
-              className="px-3 py-2.5 rounded-lg text-xs text-slate-400 hover:text-white bg-surface-800 border border-surface-700 hover:bg-surface-700 transition"
+              className="px-3 py-2.5 rounded-lg text-xs text-slate-400 hover:text-ink bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition"
             >
               Limpiar
             </button>
@@ -1238,7 +1267,7 @@ export default function BillingPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-surface-900 border border-surface-800 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-surface-700/40 rounded-2xl shadow-[0_1px_2px_rgba(15,15,15,0.04),0_4px_12px_rgba(15,15,15,0.04)] overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16 gap-3">
             <Spinner />
@@ -1302,11 +1331,16 @@ export default function BillingPage() {
                       }`}
                     >
                       <td className="px-4 py-3">
-                        <span className="font-mono text-brand-400 text-xs">
-                          {inv.invoiceNumber}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="font-mono text-brand-400 text-xs">
+                            {inv.invoiceNumber}
+                          </span>
+                          {inv.ncf && (
+                            <span className="font-mono text-[10px] text-slate-500 mt-0.5">{inv.ncf}</span>
+                          )}
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-white font-medium">
+                      <td className="px-4 py-3 text-ink font-medium">
                         {inv.patientName}
                       </td>
                       <td className="px-4 py-3 text-slate-400">
@@ -1315,7 +1349,7 @@ export default function BillingPage() {
                       <td className="px-4 py-3 text-right">
                         <MoneyDisplay
                           amount={inv.totalAmount}
-                          className="text-white"
+                          className="text-ink"
                         />
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -1386,14 +1420,14 @@ export default function BillingPage() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition disabled:opacity-40"
+                    className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition disabled:opacity-40"
                   >
                     Anterior
                   </button>
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-800 border border-surface-700 hover:bg-surface-700 transition disabled:opacity-40"
+                    className="px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-surface-100 border border-surface-700/60 hover:bg-surface-700 transition disabled:opacity-40"
                   >
                     Siguiente
                   </button>
